@@ -2,7 +2,7 @@
     --mainH: 203;
     --mainS: 27%;
     --mainL: 22%;
-    --accentH: 51;
+    --accentH: 81;
     --accentS: 100%;
     --accentL: 80%;
 }
@@ -13,7 +13,7 @@
 }
 
 *:focus {
-    outline: none;
+    outline: 1px dashed var(--accent);
 }
 
 html {

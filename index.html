@@ -75,7 +75,6 @@
                 },
                 isbnFull: function () {
                     const full = `${this.isbn}${this.checkDigit}`;
-                    console.log(full);
                     return formatIsbn(full);
                 },
             },
@@ -87,13 +86,14 @@
                     this.reset();
                     axios.get(`https://api.openbd.jp/v1/get?isbn=${this.isbnFull}`).then(response => {
                         const summary = response.data[0].summary;
-                        const detail = response.data[0].onix.CollateralDetail.TextContent.map(tc => tc.Text).join("\n");
+                        const colDeteil = response.data[0].onix.CollateralDetail;
+                        const detail = (colDeteil.TextContent)? colDeteil.TextContent.map(tc => tc.Text).join("\n") : "";
                         this.info = [
                             this.isbnFull,
                             `『${summary.title.trim()}』`,
                             summary.author.trim(),
                             `（${summary.publisher} ${formatPubdate(summary.pubdate)}）`,
-                            `\n\n----------（公式情報）----------`,
+                            ((detail)? `\n\n----------（公式情報）----------` : ""),
                             detail
                         ].join("\n");
                     });
