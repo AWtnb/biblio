@@ -85,6 +85,15 @@
                 getBiblioData: function () {
                     this.reset();
                     axios.get(`https://api.openbd.jp/v1/get?isbn=${this.isbnFull}`).then(response => {
+                        if (!response.data[0]) {
+                            this.info = [
+                                this.isbnFull,
+                                "『』",
+                                "",
+                                "（）"
+                            ].join("\n");
+                            return;
+                        }
                         const summary = response.data[0].summary;
                         const colDeteil = response.data[0].onix.CollateralDetail;
                         const detail = (colDeteil.TextContent)? colDeteil.TextContent.map(tc => tc.Text).join("\n") : "";
