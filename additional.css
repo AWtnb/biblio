@@ -101,13 +101,6 @@ button.done::after {
     font-size: .9em;
 }
 
-.repo {
-    text-align: right;
-}
-.repo a {
-    text-decoration: none;
-    color: var(--accent-sub);
-}
 
 [v-cloak] {
     display: none;
