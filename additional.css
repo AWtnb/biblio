@@ -74,9 +74,26 @@ button.done::after {
     display: flex;
     margin-bottom: 4px;
 }
-.isbn input {
+.isbn .box input {
     font-size: 24px;
     min-width: 0;
+}
+.isbn .box {
+    position: relative;
+    justify-items: center;
+}
+.isbn button.clear-button {
+    color: var(--accent-sub);
+    position: absolute;
+    right: 0;
+    background-color: transparent;
+    min-width: 1.5em;
+    width: 10%;
+    padding: 0;
+    right: 0;
+}
+.isbn button.clear-button:hover {
+    background: none;
 }
 
 .preview {
