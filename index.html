@@ -14,7 +14,7 @@
         <div id="app">
             <div class="ui">
                 <div class="isbn">
-                    <input type="tel" v-model="bookNum">
+                    <input type="tel" v-model="bookNum" v-select>
                     <button @click="getBiblioData">GO</button>
                 </div>
                 <div class="preview" v-cloak>{{isbnFull}}</div>
@@ -117,6 +117,13 @@
                     this.copied = false;
                 }
             },
+            directives: {
+                select: {
+                    mounted: function (el) {
+                        el.select()
+                    }
+                }
+            }
         }).mount("#app");
     </script>
 </body>
