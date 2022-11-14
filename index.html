@@ -14,7 +14,7 @@
         <div id="app">
             <div class="ui">
                 <div class="isbn">
-                    <input type="tel" v-model="bookNum" v-select>
+                    <input type="tel" v-model="bookNum" v-select @keydown.enter="getBiblioData">
                     <button @click="getBiblioData">GO</button>
                 </div>
                 <div class="preview" v-cloak>{{isbnFull}}</div>
