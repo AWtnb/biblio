@@ -21,7 +21,7 @@
                     </div>
                     <button @click="getBiblioData">GO</button>
                 </div>
-                <div class="preview" v-cloak>{{isbnFull}}</div>
+                <div class="preview" v-cloak>{{isbnFullFormat}}</div>
             </div>
             <textarea readonly v-model="info"></textarea>
             <button @click="openScrapBox">SCRAP</button>
@@ -96,8 +96,10 @@
                     return getCheckDigit(this.isbn);
                 },
                 isbnFull: function () {
-                    const full = `${this.isbn}${this.checkDigit}`;
-                    return formatIsbn(full);
+                    return `${this.isbn}${this.checkDigit}`;
+                },
+                isbnFullFormat: function () {
+                    return formatIsbn(this.isbnFull);
                 },
             },
             methods: {
@@ -121,7 +123,7 @@
                     });
                 },
                 openScrapBox: function() {
-                    const title = this.isbnFull;
+                    const title = this.isbnFullFormat;
                     const body = this.info;
                     window.open("https://scrapbox.io/arikaebanataw-69882885/" + encodeURIComponent(title) + "?body=" + encodeURIComponent(body));
                 },
