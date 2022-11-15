@@ -42,7 +42,7 @@ input:not([type="file"]):not([type="image"]):not(:invalid):not(:disabled):not([d
 
 textarea {
     width: 100%;
-    min-height: 40vh;
+    min-height: 20vh;
     margin-bottom: 4px;
 }
 
