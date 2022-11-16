@@ -150,6 +150,9 @@
                     })();
                 },
                 openScrapBox: function() {
+                    if (this.strNum.trim().length < 1) {
+                        return;
+                    }
                     const title = this.isbnFullFormat;
                     const body = this.info;
                     window.open("https://scrapbox.io/arikaebanataw-69882885/" + encodeURIComponent(title) + "?body=" + encodeURIComponent(body));
