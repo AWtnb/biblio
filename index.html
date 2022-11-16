@@ -52,17 +52,17 @@
         }
 
         const formatContent = (title="", subtitle="", author="", publisher="", pubdate="") => {
-            const st = (subtitle.trim().length)? ("\u2015\u2015" + subtitle.trim()) : "";
+            const st = (subtitle.length && subtitle != title)? ("\u2015\u2015" + subtitle) : "";
             const lines = [
-                `『${title.trim()}${st}』`,
+                `『${title}${st}』`,
             ];
-            if (author.trim().length) {
-                lines.push(author.trim());
+            if (author.length) {
+                lines.push(author);
             }
             else {
                 lines.push("／著");
             }
-            lines.push(`（${publisher.trim()} ${ formatPubdate(pubdate.trim())}）`);
+            lines.push(`（${publisher} ${ formatPubdate(pubdate)}）`);
             return lines.join("\n")
         }
 
@@ -142,6 +142,11 @@
                 getBiblioData: async function () {
                     this.reset();
                     await this.fetchOpenBD();
+                    await (() => {
+                        if (!this.isSuccess) {
+                            this.info = "not found in openbd...";
+                        }
+                    })();
                     await this.fetchGoogleBooks();
                     await (() => {
                         if (!this.isSuccess) {
