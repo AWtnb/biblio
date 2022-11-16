@@ -52,7 +52,7 @@
         }
 
         const formatContent = (title="", subtitle="", author="", publisher="", pubdate="") => {
-            const st = (subtitle.trim().length)? ("&horbar;&horbar;" + subtitle.trim()) : "";
+            const st = (subtitle.trim().length)? ("\u2015\u2015" + subtitle.trim()) : "";
             const lines = [
                 `『${title.trim()}${st}』`,
             ];
