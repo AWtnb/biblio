@@ -1,5 +1,5 @@
 # README
 
-ISBN から書誌情報を検索して表示するツール。
+ISBN から書誌情報を検索してスクラップ。
 
-Search and display bibliographic information by ISBN.
+Search and scrap bibliographic information by ISBN.
