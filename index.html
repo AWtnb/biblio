@@ -51,18 +51,22 @@
             return s.substr(0,3) + "-" + s.substr(3,1) + "-" + s.substr(4,8) + "-" + s.substr(12,1);
         }
 
+        const formatAuthor = (s) => {
+            return s.replace(/\uff0f[^ ]+$/, "").replace(/\uff0f.+? /g, " ").split(" ").map(elem => "#" + elem).join(" ");
+        }
+
         const formatContent = (title="", subtitle="", author="", publisher="", pubdate="") => {
             const st = (subtitle.length && subtitle != title)? ("\u2015\u2015" + subtitle) : "";
             const lines = [
                 `『${title}${st}』`,
             ];
             if (author.length) {
-                lines.push(author);
+                lines.push(formatAuthor(author));
             }
             else {
-                lines.push("／著");
+                lines.push("#");
             }
-            lines.push(`（${publisher} ${ formatPubdate(pubdate)}）`);
+            lines.push(`#${publisher} ${formatPubdate(pubdate)}`);
             return lines.join("\n")
         }
 
