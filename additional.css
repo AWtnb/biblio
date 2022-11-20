@@ -55,13 +55,6 @@ button {
 button:not(:disabled):not([disabled]):hover {
     background-color: var(--accent-sub);
 }
-button.done::after {
-    position: absolute;
-    content: "\2714";
-    color: var(--main);
-    font-weight: bold;
-    right: .5rem;
-}
 
 .ui {
     margin: 1em 0;
@@ -82,13 +75,16 @@ button.done::after {
     position: relative;
     justify-items: center;
 }
+.isbn button {
+    margin-left: 1rem;
+}
 .isbn button.clear-button {
     color: var(--accent-sub);
     position: absolute;
     right: 0;
     background-color: transparent;
     min-width: 1.5em;
-    width: 10%;
+    width: 20%;
     padding: 0;
     right: 0;
 }
