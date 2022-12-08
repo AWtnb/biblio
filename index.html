@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="utf-8">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20style%3D%22dominant-baseline%3Acentral%3Btext-anchor%3Amiddle%3Bfont-size%3A90px%3B%22%3E%26%23x1F4DA%3B%3C/text%3E%3C/svg%3E">
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20style%3D%22dominant-baseline%3Acentral%3Btext-anchor%3Amiddle%3Bfont-size%3A90px%3B%22%3E%26%23x1F4DA%3B%3C/text%3E%3C/svg%3E">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <title>BIB-LIO</title>
     <link rel="stylesheet" type="text/css" href="./almond.lite.css">
@@ -23,8 +24,15 @@
                 </div>
                 <div class="preview" v-cloak>{{isbnFullFormat}}</div>
             </div>
-            <textarea readonly v-model="info"></textarea>
-            <button @click="openScrapBox">SCRAP</button>
+            <div class="res">
+                <textarea v-model="infoByOpenBd" ></textarea>
+                <button @click="openScrapBox(infoByOpenBd)">SCRAP</button>
+                <button v-if="requireExtraSearch" @click="googleSearch" class="google-button">GOOGLE</button>
+            </div>
+            <div class="res">
+                <textarea v-model="infoByGoogle" ></textarea>
+                <button @click="openScrapBox(infoByGoogle)">SCRAP</button>
+            </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.global.js"></script>
@@ -44,21 +52,21 @@
 
         const formatPubdate = (s) => {
             const pd = s.replace(/[^\d]/g, "");
-            return pd.substr(0,4) + "/" + pd.substr(4,2) + "/" + pd.substr(6,2);
+            return pd.substr(0, 4) + "/" + pd.substr(4, 2) + "/" + pd.substr(6, 2);
         }
 
         const formatIsbn = (s) => {
-            return s.substr(0,3) + "-" + s.substr(3,1) + "-" + s.substr(4,8) + "-" + s.substr(12,1);
+            return s.substr(0, 3) + "-" + s.substr(3, 1) + "-" + s.substr(4, 8) + "-" + s.substr(12, 1);
         }
 
         const formatAuthor = (s) => {
             return s.replace(/\uff0f[^ ]+$/, "").replace(/\uff0f.+? /g, " ").split(" ").map(elem => "#" + elem).join(" ");
         }
 
-        const formatContent = (title="", subtitle="", author="", publisher="", pubdate="") => {
-            const st = (subtitle.length && subtitle != title)? ("\u2015\u2015" + subtitle) : "";
+        const formatContent = (title = "", subtitle = "", author = "", publisher = "", pubdate = "", toc = "") => {
+            const st = (subtitle.length && subtitle != title) ? ("\u2015\u2015" + subtitle) : "";
             const lines = [
-                `『${title}${st}』`,
+                `『[${title}${st}]』`,
             ];
             if (author.length) {
                 lines.push(formatAuthor(author));
@@ -67,19 +75,26 @@
                 lines.push("#");
             }
             lines.push(`#${publisher} ${formatPubdate(pubdate)}`);
+            lines.push("\n\n" + toc.replace(/(\r?\n)+/g, "\n"));
             return lines.join("\n")
+        }
+
+        const calcISBN = (s) => {
+            if (s.length == 9) {
+                return `9784${s.substr(0, 8)}`;
+            }
+            if (s.length == 13) {
+                return s.substr(0, 12);
+            }
+            return `9784${s.padStart(8, "0")}`;
         }
 
         const vm = Vue.createApp({
             data: function () {
                 return {
                     bookNum: "",
-                    bookTitle: "",
-                    publisher: "",
-                    author: "",
-                    pubDate: "",
-                    info: "",
-                    isSuccess: false
+                    infoByOpenBd: "",
+                    infoByGoogle: "",
                 }
             },
             computed: {
@@ -87,13 +102,7 @@
                     return String(this.bookNum).replace(/\s|[^\d]/g, "");
                 },
                 isbn: function () {
-                    if (this.strNum.length == 9) {
-                        return `9784${this.strNum.substr(0,8)}`;
-                    }
-                    if (this.strNum.length == 13) {
-                        return this.strNum.substr(0,12);
-                    }
-                    return `9784${this.strNum.padStart(8, "0")}`;
+                    return calcISBN(this.strNum);
                 },
                 checkDigit: function () {
                     return getCheckDigit(this.isbn);
@@ -104,33 +113,31 @@
                 isbnFullFormat: function () {
                     return formatIsbn(this.isbnFull);
                 },
+                requireExtraSearch: function () {
+                    return this.infoByOpenBd.length > 0 || this.infoByGoogle.length > 0;
+                }
             },
             methods: {
                 clearBox: function () {
                     this.bookNum = "";
                 },
                 reset: function () {
-                    this.info = "";
-                    this.isSuccess = false;
+                    this.infoByOpenBd = "";
+                    this.infoByGoogle = "";
                 },
-                fetchOpenBD: async function () {
-                    if (this.isSuccess) {
-                        return;
-                    }
-                    await axios.get(`https://api.openbd.jp/v1/get?isbn=${this.isbnFull}`).then(response => {
+                fetchOpenBD: function () {
+                    axios.get(`https://api.openbd.jp/v1/get?isbn=${this.isbnFull}`).then(response => {
                         if (response.data[0]) {
                             const summary = response.data[0].summary;
                             const subtitle = response.data[0].onix.DescriptiveDetail.TitleDetail.TitleElement.TitleText.content || "";
-                            this.info = formatContent(summary.title, subtitle, summary.author, summary.publisher, summary.pubdate);
-                            this.isSuccess = true;
+                            const textContent = response.data[0].onix.CollateralDetail.TextContent.filter(x => x.TextType == "04") || [];
+                            const toc = (textContent.length)? textContent[0].Text : "";
+                            this.infoByOpenBd = formatContent(summary.title, subtitle, summary.author, summary.publisher, summary.pubdate, toc);
                         }
                     });
                 },
-                fetchGoogleBooks: async function () {
-                    if (this.isSuccess) {
-                        return;
-                    }
-                    await axios.get(`https://www.googleapis.com/books/v1/volumes?q=isbn:${this.isbnFull}`).then(response => {
+                fetchGoogleBooks: function () {
+                    axios.get(`https://www.googleapis.com/books/v1/volumes?q=isbn:${this.isbnFull}`).then(response => {
                         if (response.data.items) {
                             const vInfo = response.data.items[0].volumeInfo;
                             const title = vInfo.title;
@@ -138,33 +145,24 @@
                             const author = vInfo.authors.join("・");
                             const publisher = vInfo.publisher || "";
                             const pubdate = vInfo.publishedDate || "";
-                            this.info = formatContent(title, subTitle, author, publisher, pubdate);
-                            this.isSuccess = true;
+                            this.infoByGoogle = formatContent(title, subTitle, author, publisher, pubdate);
                         }
                     })
                 },
-                getBiblioData: async function () {
+                getBiblioData: function () {
                     this.reset();
-                    await this.fetchOpenBD();
-                    await (() => {
-                        if (!this.isSuccess) {
-                            this.info = "not found in openbd...";
-                        }
-                    })();
-                    await this.fetchGoogleBooks();
-                    await (() => {
-                        if (!this.isSuccess) {
-                            this.info = formatContent();
-                        }
-                    })();
+                    this.fetchOpenBD();
+                    this.fetchGoogleBooks();
                 },
-                openScrapBox: function() {
+                googleSearch: function () {
+                    window.open("https://www.google.com/search?hl=ja&q=" + this.isbnFull);
+                },
+                openScrapBox: function (content) {
                     if (this.strNum.trim().length < 1) {
                         return;
                     }
                     const title = this.isbnFullFormat;
-                    const body = this.info;
-                    window.open("https://scrapbox.io/awtnb-book-dog-ear/" + encodeURIComponent(title) + "?body=" + encodeURIComponent(body));
+                    window.open("https://scrapbox.io/awtnb-book-dog-ear/" + encodeURIComponent(title) + "?body=" + encodeURIComponent(content));
                 },
             },
             directives: {

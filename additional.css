@@ -56,6 +56,19 @@ button:not(:disabled):not([disabled]):hover {
     background-color: var(--accent-sub);
 }
 
+.res {
+    margin-bottom: 24px;
+}
+.res button+button {
+    margin-left: 1em;
+}
+.res button.google-button {
+    background-color: transparent;
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    margin-left: 1em;
+}
+
 .ui {
     margin: 1em 0;
 }
@@ -96,7 +109,6 @@ button:not(:disabled):not([disabled]):hover {
     color: var(--accent-sub);
     font-size: .9em;
 }
-
 
 [v-cloak] {
     display: none;
