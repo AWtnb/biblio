@@ -27,7 +27,7 @@
             <div class="res">
                 <textarea v-model="infoByOpenBd" ></textarea>
                 <button @click="openScrapBox(infoByOpenBd)">SCRAP</button>
-                <button v-if="requireExtraSearch" @click="googleSearch" class="google-button">GOOGLE</button>
+                <button @click="googleSearch" v-if="requireExtraSearch" v-cloak class="google-button">GOOGLE</button>
             </div>
             <div class="res">
                 <textarea v-model="infoByGoogle" ></textarea>
