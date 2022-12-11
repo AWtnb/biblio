@@ -17,7 +17,7 @@
             <div class="ui">
                 <div class="isbn">
                     <div class="box">
-                        <input type="tel" v-model="bookNum" autofocus v-select @keydown.enter="getBiblioData">
+                        <input type="tel" v-model="bookNum" onsubmit="return false;" autofocus v-select @keydown.enter="getBiblioData">
                         <button class="clear-button" @click="clearBox" tabindex="-1">&times;</button>
                     </div>
                     <button @click="getBiblioData">GO</button>
