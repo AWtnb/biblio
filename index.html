@@ -17,7 +17,7 @@
             <div class="ui">
                 <div class="isbn">
                     <div class="box">
-                        <input type="tel" v-model="bookNum" v-select @keydown.enter="getBiblioData">
+                        <input type="tel" v-model="bookNum" autofocus v-select @keydown.enter="getBiblioData">
                         <button class="clear-button" @click="clearBox" tabindex="-1">&times;</button>
                     </div>
                     <button @click="getBiblioData">GO</button>
@@ -25,12 +25,12 @@
                 <div class="preview" v-cloak>{{isbnFullFormat}}</div>
             </div>
             <div class="res">
-                <textarea v-model="infoByOpenBd" ></textarea>
+                <textarea v-model="infoByOpenBd"></textarea>
                 <button @click="openScrapBox(infoByOpenBd)">SCRAP</button>
                 <button @click="googleSearch" v-if="requireExtraSearch" v-cloak class="google-button">GOOGLE</button>
             </div>
             <div class="res">
-                <textarea v-model="infoByGoogle" ></textarea>
+                <textarea v-model="infoByGoogle"></textarea>
                 <button @click="openScrapBox(infoByGoogle)">SCRAP</button>
             </div>
         </div>
@@ -131,8 +131,8 @@
                             const summary = response.data[0].summary;
                             const subtitle = response.data[0].onix.DescriptiveDetail.TitleDetail.TitleElement.TitleText.content || "";
                             const colDetail = response.data[0].onix.CollateralDetail;
-                            const textContent = (colDetail.length)? colDetail.TextContent.filter(x => x.TextType == "04") : [];
-                            const toc = (textContent.length)? textContent[0].Text : "";
+                            const textContent = (colDetail.length) ? colDetail.TextContent.filter(x => x.TextType == "04") : [];
+                            const toc = (textContent.length) ? textContent[0].Text : "";
                             this.infoByOpenBd = formatContent(summary.title, subtitle, summary.author, summary.publisher, summary.pubdate, toc);
                         }
                         else {
