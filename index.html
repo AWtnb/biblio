@@ -17,7 +17,7 @@
             <div class="ui">
                 <div class="isbn">
                     <div class="box">
-                        <input type="tel" v-model="bookNum" onsubmit="return false;" autofocus v-select
+                        <input type="tel" v-model="bookNum" autofocus v-select
                             @keydown.enter="getBiblioData" @keyup.enter="getBiblioData">
                         <button class="clear-button" @click="clearBox" tabindex="-1">&times;</button>
                     </div>
@@ -139,7 +139,7 @@
                             const summary = response.data[0].summary;
                             const subtitle = response.data[0].onix.DescriptiveDetail.TitleDetail.TitleElement.TitleText.content || "";
                             const colDetail = response.data[0].onix.CollateralDetail;
-                            const textContent = (colDetail) ? colDetail.TextContent.filter(x => x.TextType == "04") : [];
+                            const textContent = (colDetail && colDetail.TextContent) ? colDetail.TextContent.filter(x => x.TextType == "04") : [];
                             const toc = (textContent.length) ? textContent[0].Text : "";
                             this.infoByOpenBd = formatContent(summary.title, subtitle, summary.author, summary.publisher, summary.pubdate, toc);
                         }
