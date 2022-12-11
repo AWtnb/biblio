@@ -130,9 +130,13 @@
                         if (response.data[0]) {
                             const summary = response.data[0].summary;
                             const subtitle = response.data[0].onix.DescriptiveDetail.TitleDetail.TitleElement.TitleText.content || "";
-                            const textContent = response.data[0].onix.CollateralDetail.TextContent.filter(x => x.TextType == "04") || [];
+                            const colDetail = response.data[0].onix.CollateralDetail;
+                            const textContent = (colDetail.length)? colDetail.TextContent.filter(x => x.TextType == "04") : [];
                             const toc = (textContent.length)? textContent[0].Text : "";
                             this.infoByOpenBd = formatContent(summary.title, subtitle, summary.author, summary.publisher, summary.pubdate, toc);
+                        }
+                        else {
+                            this.infoByOpenBd = formatContent();
                         }
                     });
                 },
@@ -146,6 +150,9 @@
                             const publisher = vInfo.publisher || "";
                             const pubdate = vInfo.publishedDate || "";
                             this.infoByGoogle = formatContent(title, subTitle, author, publisher, pubdate);
+                        }
+                        else {
+                            this.infoByGoogle = formatContent();
                         }
                     })
                 },
