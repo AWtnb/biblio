@@ -17,7 +17,8 @@
             <div class="ui">
                 <div class="isbn">
                     <div class="box">
-                        <input type="tel" v-model="bookNum" onsubmit="return false;" autofocus v-select @keydown.enter="getBiblioData">
+                        <input type="tel" v-model="bookNum" onsubmit="return false;" autofocus v-select
+                            @keydown.enter="getBiblioData">
                         <button class="clear-button" @click="clearBox" tabindex="-1">&times;</button>
                     </div>
                     <button @click="getBiblioData">GO</button>
@@ -63,10 +64,17 @@
             return s.replace(/\uff0f[^ ]+$/, "").replace(/\uff0f.+? /g, " ").split(" ").map(elem => "#" + elem).join(" ");
         }
 
+        const toHalfWidth = (s) => {
+            return s.replace(/[\uff21-\uff3a\uff41-\uff5a\uff10-\uff19]/g, (s) => {
+                return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+            });
+        }
+
         const formatContent = (title = "", subtitle = "", author = "", publisher = "", pubdate = "", toc = "") => {
             const st = (subtitle.length && subtitle != title) ? ("\u2015\u2015" + subtitle) : "";
+            const fullTitle = toHalfWidth(title + st);
             const lines = [
-                `『[${title}${st}]』`,
+                `『[${fullTitle}]』`,
             ];
             if (author.length) {
                 lines.push(formatAuthor(author));
@@ -75,7 +83,7 @@
                 lines.push("#");
             }
             lines.push(`#${publisher} ${formatPubdate(pubdate)}`);
-            lines.push("\n\n" + toc.replace(/(\r?\n)+/g, "\n"));
+            lines.push("\n\n" + toc.replace(/(\r?\n)+/g, "\n\n\n"));
             return lines.join("\n")
         }
 
@@ -131,7 +139,7 @@
                             const summary = response.data[0].summary;
                             const subtitle = response.data[0].onix.DescriptiveDetail.TitleDetail.TitleElement.TitleText.content || "";
                             const colDetail = response.data[0].onix.CollateralDetail;
-                            const textContent = (colDetail.length) ? colDetail.TextContent.filter(x => x.TextType == "04") : [];
+                            const textContent = (colDetail) ? colDetail.TextContent.filter(x => x.TextType == "04") : [];
                             const toc = (textContent.length) ? textContent[0].Text : "";
                             this.infoByOpenBd = formatContent(summary.title, subtitle, summary.author, summary.publisher, summary.pubdate, toc);
                         }
