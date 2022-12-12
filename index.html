@@ -26,12 +26,12 @@
                 <div class="preview" v-cloak>{{isbnFullFormat}}</div>
             </div>
             <div class="res">
-                <textarea v-model="infoByOpenBd"></textarea>
+                <textarea readonly tabindex="-1" v-model="infoByOpenBd"></textarea>
                 <button @click="openScrapBox(infoByOpenBd)">SCRAP</button>
                 <button @click="googleSearch" v-if="requireExtraSearch" v-cloak class="google-button">GOOGLE</button>
             </div>
             <div class="res">
-                <textarea v-model="infoByGoogle"></textarea>
+                <textarea readonly tabindex="-1" v-model="infoByGoogle"></textarea>
                 <button @click="openScrapBox(infoByGoogle)">SCRAP</button>
             </div>
         </div>
