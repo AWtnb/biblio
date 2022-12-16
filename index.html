@@ -61,7 +61,7 @@
         }
 
         const formatAuthor = (s) => {
-            return s.replace(/\uff0f[^ ]+$/, "").replace(/\uff0f.+? /g, " ").split(" ").map(elem => "#" + elem).join(" ");
+            return s.split(" ").map(x => x.split("／")[0]).map(x => "[" + x + "]").join(" ");
         }
 
         const toHalfWidth = (s) => {
