@@ -82,7 +82,7 @@
             else {
                 lines.push("#");
             }
-            lines.push(`#${publisher} ${formatPubdate(pubdate)}`);
+            lines.push(`[${publisher}] ${formatPubdate(pubdate)}`);
             lines.push("\n\n" + toc.replace(/(\r?\n)+/g, "\n\n\n"));
             return lines.join("\n")
         }
