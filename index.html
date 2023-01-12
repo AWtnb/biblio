@@ -17,7 +17,7 @@
             <div class="ui">
                 <div class="isbn">
                     <div class="box">
-                        <input type="tel" v-model="bookNum" autofocus v-select
+                        <input type="tel" v-model="bookNum" ref="userInput" autofocus v-focus
                             @keydown.enter="getBiblioData" @keyup.enter="getBiblioData">
                         <button class="clear-button" @click="clearBox" tabindex="-1">&times;</button>
                     </div>
@@ -181,11 +181,16 @@
                 },
             },
             directives: {
-                select: {
+                focus: {
                     mounted: function (el) {
-                        el.select()
+                        el.focus();
                     }
                 }
+            },
+            mounted: function () {
+                this.$nextTick(function () {
+                    this.$refs.userInput.focus();
+                })
             }
         }).mount("#app");
     </script>
