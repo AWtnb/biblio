@@ -34,6 +34,11 @@
                 <textarea readonly tabindex="-1" v-model="infoByGoogle"></textarea>
                 <button @click="openScrapBox(infoByGoogle)">SCRAP</button>
             </div>
+            <details>
+                <summary>Table of Contents</summary>
+                <textarea v-model="toc"></textarea>
+                <button @click="addTocToScrapBox">ADD</button>
+            </details>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.global.js"></script>
@@ -97,12 +102,20 @@
             return `9784${s.padStart(8, "0")}`;
         }
 
+        const formatToc = (s) => {
+            return s.split(/\n+/).map((line, idx) => {
+                const title = line.replace(/「/g, "『").replace(/」/g, "』");
+                return `第${idx + 1}章「${title}」`;
+            }).join("\n\n");
+        }
+
         const vm = Vue.createApp({
             data: function () {
                 return {
                     bookNum: "",
                     infoByOpenBd: "",
                     infoByGoogle: "",
+                    toc: ""
                 }
             },
             computed: {
@@ -179,6 +192,14 @@
                     const title = this.isbnFullFormat;
                     window.open("https://scrapbox.io/awtnb-book-dog-ear/" + encodeURIComponent(title) + "?body=" + encodeURIComponent(content));
                 },
+                addTocToScrapBox: function () {
+                    if (this.strNum.trim().length < 1) {
+                        return;
+                    }
+                    const tocFmt = formatToc(this.toc);
+                    const title = this.isbnFullFormat;
+                    window.open("https://scrapbox.io/awtnb-book-dog-ear/" + encodeURIComponent(title) + "?body=" + encodeURIComponent(tocFmt));
+                }
             },
             directives: {
                 focus: {
