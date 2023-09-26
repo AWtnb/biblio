@@ -36,6 +36,7 @@
             </div>
             <details>
                 <summary>Table of Contents</summary>
+                <label><input type="checkbox" v-model="simpleToc">章番号不要</label>
                 <textarea v-model="toc"></textarea>
                 <button @click="addTocToScrapBox">ADD</button>
             </details>
@@ -102,11 +103,14 @@
             return `9784${s.padStart(8, "0")}`;
         }
 
-        const formatToc = (s) => {
+        const formatToc = (s, asSimple = false) => {
             return s.split(/\n+/).map((line, idx) => {
-                const title = line.replace(/「/g, "『").replace(/」/g, "』");
-                return `第${idx + 1}章「${title}」`;
-            }).join("\n\n");
+                const title = "「" + line.replace(/「/g, "『").replace(/」/g, "』") + "」";
+                if (asSimple) {
+                    return title;
+                }
+                return `第${idx + 1}章${title}`;
+            }).join("\n\n\n");
         }
 
         const vm = Vue.createApp({
@@ -115,7 +119,8 @@
                     bookNum: "",
                     infoByOpenBd: "",
                     infoByGoogle: "",
-                    toc: ""
+                    toc: "",
+                    simpleToc: false
                 }
             },
             computed: {
@@ -196,7 +201,7 @@
                     if (this.strNum.trim().length < 1) {
                         return;
                     }
-                    const tocFmt = formatToc(this.toc);
+                    const tocFmt = formatToc(this.toc, this.simpleToc);
                     const title = this.isbnFullFormat;
                     window.open("https://scrapbox.io/awtnb-book-dog-ear/" + encodeURIComponent(title) + "?body=" + encodeURIComponent(tocFmt));
                 }

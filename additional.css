@@ -110,10 +110,8 @@ button:not(:disabled):not([disabled]):hover {
     font-size: .9em;
 }
 
-summary {
-    color: var(--accent-sub);
-}
 details {
+    color: var(--accent-sub);
     border: none;
 }
 details:focus, summary:focus {
