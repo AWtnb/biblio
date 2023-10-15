@@ -97,22 +97,25 @@
                     return this.authorInfo.split(" ").map(x => x.split("／")[0]).map(x => "  - " + toHalfWidth(x));
                 },
                 titleFormatted: function () {
-                    const st = (this.subtitle.length && this.subtitle != this.title) ? ("\u2015\u2015" + this.subtitle) : "";
+                    return toHalfWidth(this.title);
+                },
+                fullTitleFormatted: function () {
+                    const st = (this.subtitle.length && this.subtitle != this.titleFormatted) ? ("\u2015\u2015" + this.subtitle) : "";
                     return toHalfWidth(this.title + st).replace(/ *: */g, "\uff1a");
                 },
                 frontMatter: function () {
                     return [
                         "---",
                         "aliases:",
-                        "  - " + this.title,
                         "  - " + this.titleFormatted,
+                        "  - " + this.fullTitleFormatted,
                         "isbn: " + this.isbnFull,
-                        "title: " + toHalfWidth(this.titleFormatted),
                         "from: " + toHalfWidth(this.publisherName),
                         "year: " + this.pubYear,
                         "tags:",
                         this.authors.join("\n"),
                         "---",
+                        "",
                     ].join("\n");
                 }
             },
