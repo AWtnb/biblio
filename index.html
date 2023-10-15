@@ -55,18 +55,6 @@
             });
         }
 
-        const getCheckDigit = (isbn) => {
-            const total = String(isbn).split("").map((n, i) => {
-                if (i % 2 == 0) {
-                    return Number(n);
-                }
-                return Number(n) * 3;
-            }).reduce((accum, x) => {
-                return accum + Number(x)
-            }, 0);
-            return ((10 - (total % 10))) % 10;
-        }
-
         const vm = Vue.createApp({
             data: function () {
                 return {
@@ -86,22 +74,36 @@
                     const s = ("00000000" + this.bookNum).substring(0, 16);
                     return "9784" + s.substring(s.length - 8, s.length);
                 },
+                checkDigit: function () {
+                    const total = String(this.isbn).split("").map((n, i) => {
+                        if (i % 2 == 0) {
+                            return Number(n);
+                        }
+                        return Number(n) * 3;
+                    }).reduce((accum, x) => {
+                        return accum + Number(x)
+                    }, 0);
+                    return ((10 - (total % 10))) % 10;
+                },
                 isbnFull: function () {
-                    return `${this.isbn}${getCheckDigit(this.isbn)}`;
+                    return `${this.isbn}${this.checkDigit}`;
                 },
                 isbnFormat: function () {
                     const s = this.isbnFull;
-                    return s.substr(0, 3) + "-" + s.substr(3, 1) + "-" + s.substr(4, 8) + "-" + s.substr(12, 1);
+                    return s.substring(0, 3) + "-" + s.substring(3, 4) + "-" + s.substring(4, 12) + "-" + s.substring(12, 13);
                 },
                 authors: function () {
-                    return this.authorInfo.split(" ").map(x => x.split("／")[0]).map(x => "  - " + toHalfWidth(x));
+                    return this.authorInfo.split(" ").map(x => x.split("／")[0].trim()).map(x => x.replace(/(?<![a-z]),/g, "")).filter(x => x.length).map(x => "  - " + x);
                 },
                 titleFormatted: function () {
-                    return toHalfWidth(this.title);
+                    return toHalfWidth(this.title).trim();
                 },
                 fullTitleFormatted: function () {
                     const st = (this.subtitle.length && this.subtitle != this.titleFormatted) ? ("\u2015\u2015" + this.subtitle) : "";
-                    return toHalfWidth(this.title + st).replace(/ *: */g, "\uff1a");
+                    if (st.length < 1) {
+                        return "";
+                    }
+                    return toHalfWidth(this.titleFormatted + st).replace(/ *: */g, "\uff1a");
                 },
                 frontMatter: function () {
                     return [
@@ -110,7 +112,7 @@
                         "  - " + this.titleFormatted,
                         "  - " + this.fullTitleFormatted,
                         "isbn: " + this.isbnFull,
-                        "from: " + toHalfWidth(this.publisherName),
+                        "from: " + this.publisherName,
                         "year: " + this.pubYear,
                         "tags:",
                         this.authors.join("\n"),
@@ -142,9 +144,9 @@
                             const summary = response.data[0].summary;
                             this.title = summary.title;
                             this.subtitle = response.data[0].onix.DescriptiveDetail.TitleDetail.TitleElement.TitleText.content || "";
-                            this.publisherName = summary.publisher;
+                            this.publisherName = toHalfWidth(summary.publisher);
                             this.pubYear = summary.pubdate.substring(0, 4);
-                            this.authorInfo = summary.author;
+                            this.authorInfo = toHalfWidth(summary.author);
                         }
                     });
                 },
@@ -156,9 +158,9 @@
                             const vInfo = response.data.items[0].volumeInfo;
                             this.title = vInfo.title;
                             this.subtitle = vInfo.subtitle || "";
-                            this.publisherName = vInfo.publisher || "";
+                            this.publisherName = toHalfWidth(vInfo.publisher || "");
                             this.pubYear = (vInfo.publishedDate || "").substring(0, 4);
-                            this.authorInfo = vInfo.authors.join(" ");
+                            this.authorInfo = toHalfWidth(vInfo.authors.join(" "));
                         }
                     })
                 },
