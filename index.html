@@ -10,7 +10,7 @@
     <!-- Safari / IE -->
     <link rel="icon alternate" type="image/png"
         href="https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/72x72/1f4da.png" />
-    <title>BIBLIO-SCRAP</title>
+    <title>BOOK-SCRAP</title>
     <link rel="stylesheet" type="text/css" href="./milligram.min.css">
     <link rel="stylesheet" type="text/css" href="./additional.css">
 </head>
@@ -18,30 +18,32 @@
 <body>
     <div class="container">
         <div id="app">
-            <div class="ui">
-                <div class="isbn">
-                    <div class="preview" v-cloak>{{isbnFormat}}</div>
-                    <input type="tel" v-model="bookNum" ref="userInput" @keydown.enter="fetchOpenBD"
-                        @keyup.enter="fetchOpenBD">
-                    <div class="box">
-                        <button @click="fetchOpenBD">OpenBD</button>
-                        <button @click="fetchGoogleBooks">GoogleBooks</button>
-                    </div>
+            <div class="isbn">
+                <div class="preview" v-cloak>{{isbnFormat}}</div>
+                <div class="searchBox">
+                    <input type="tel" v-model="bookNum" ref="userInput" @keydown.enter="fetchData"
+                        @keyup.enter="fetchData">
                     <button class="clear-button" @click="clearBox" tabindex="-1">&times;</button>
+                </div>
+                <div class="buttonBox">
+                    <button @click="fetchData">Go</button>
+                    <label><input type="checkbox" v-model="searchOnGoogleBooks">GoogleBooks</label>
                 </div>
             </div>
             <details>
                 <summary>Configure</summary>
-                <button @click="googleSearch">Google</button>
+                <button class="button-outline" @click="googleSearch">Google</button>
                 <label>Title<input type="text" v-model="title"></label>
                 <label>Subtitle<input type="text" v-model="subtitle"></label>
                 <label>Publisher<input type="text" v-model="publisherName"></label>
                 <label>Publish Year<input type="text" v-model="pubYear"></label>
                 <label>Tags (space-separated)<input type="text" v-model="authorInfo"></label>
             </details>
-            <textarea readonly tabindex="-1" v-model="frontMatter"></textarea>
-            <button @click="copyFileName">Copy FileName</button>
-            <button @click="copyFrontMatter">Copy FrontMatter</button>
+            <div class="front-matter">
+                <textarea readonly tabindex="-1" v-model="frontMatter"></textarea>
+                <button @click="copyFrontMatter" :class="{done:frontMatterCopied}">Copy</button>
+            </div>
+            <button @click="copyFileName" :class="{done:fileNameCopied}">Copy FileName</button>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.global.js"></script>
@@ -65,30 +67,11 @@
             return ((10 - (total % 10))) % 10;
         }
 
-        const calcISBN = (s) => {
-            if (s.length == 9) {
-                return `9784${s.substr(0, 8)}`;
-            }
-            if (s.length == 13) {
-                return s.substr(0, 12);
-            }
-            return `9784${s.padStart(8, "0")}`;
-        }
-
-        const formatToc = (s, asSimple = false) => {
-            return s.split(/\n+/).map((line, idx) => {
-                const title = "「" + line.replace(/「/g, "『").replace(/」/g, "』") + "」";
-                if (asSimple) {
-                    return title;
-                }
-                return `第${idx + 1}章${title}`;
-            }).join("\n\n\n");
-        }
-
         const vm = Vue.createApp({
             data: function () {
                 return {
                     bookNum: "",
+                    searchOnGoogleBooks: false,
                     title: "",
                     subtitle: "",
                     publisherName: "",
@@ -99,17 +82,12 @@
                 }
             },
             computed: {
-                strNum: function () {
-                    return String(this.bookNum).replace(/\s|[^\d]/g, "");
-                },
                 isbn: function () {
-                    return calcISBN(this.strNum);
-                },
-                checkDigit: function () {
-                    return getCheckDigit(this.isbn);
+                    const s = ("00000000" + this.bookNum).substring(0, 16);
+                    return "9784" + s.substring(s.length - 8, s.length);
                 },
                 isbnFull: function () {
-                    return `${this.isbn}${this.checkDigit}`;
+                    return `${this.isbn}${getCheckDigit(this.isbn)}`;
                 },
                 isbnFormat: function () {
                     const s = this.isbnFull;
@@ -142,17 +120,20 @@
                 clearBox: function () {
                     this.bookNum = "";
                 },
-                reset: function () {
+                resetInfo: function () {
                     this.title = "";
                     this.subtitle = "";
                     this.publisherName = "";
                     this.pubYear = "";
                     this.authorInfo = "";
+                },
+                resetCopyStatus: function () {
                     this.frontMatterCopied = false;
                     this.fileNameCopied = false;
                 },
                 fetchOpenBD: function () {
-                    this.reset();
+                    this.resetInfo();
+                    this.resetCopyStatus();
                     axios.get(`https://api.openbd.jp/v1/get?isbn=${this.isbnFull}`).then(response => {
                         if (response.data[0]) {
                             const summary = response.data[0].summary;
@@ -165,7 +146,8 @@
                     });
                 },
                 fetchGoogleBooks: function () {
-                    this.reset();
+                    this.resetInfo();
+                    this.resetCopyStatus();
                     axios.get(`https://www.googleapis.com/books/v1/volumes?q=isbn:${this.isbnFull}`).then(response => {
                         if (response.data.items) {
                             const vInfo = response.data.items[0].volumeInfo;
@@ -176,6 +158,14 @@
                             this.authorInfo = vInfo.authors.join(" ");
                         }
                     })
+                },
+                fetchData: function () {
+                    if (this.searchOnGoogleBooks) {
+                        this.fetchGoogleBooks();
+                    }
+                    else {
+                        this.fetchOpenBD();
+                    }
                 },
                 googleSearch: function () {
                     window.open("https://www.google.com/search?hl=ja&q=" + this.isbnFull);
@@ -191,12 +181,11 @@
             },
             watch: {
                 bookNum: function () {
-                    this.reset();
-                    this.frontMatterCopied = false;
-                    this.fileNameCopied = false;
+                    this.resetInfo();
+                    this.resetCopyStatus();
                 },
                 frontMatter: function () {
-                    this.frontMatterCopied = false;
+                    this.resetCopyStatus();
                 },
             },
         }).mount("#app");

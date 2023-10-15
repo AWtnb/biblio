@@ -1,126 +1,84 @@
-:root {
-    --mainH: 203;
-    --mainS: 27%;
-    --mainL: 22%;
-    --accentH: 81;
-    --accentS: 100%;
-    --accentL: 80%;
-}
-:root {
-    --main: hsl(var(--mainH), var(--mainS), var(--mainL));
-    --accent: hsl(var(--accentH), var(--accentS), var(--accentL));
-    --accent-sub: hsl(var(--accentH), var(--accentS), 36%);
-}
-
-*:focus {
-    outline: 1px dashed var(--accent);
-}
-
-html {
-    background-color: var(--main);
-}
-
 .container {
-    max-width: 600px;
-    min-width: 400px;
-    margin: auto;
+  max-width: 600px;
+  min-width: 400px;
+  margin: auto;
 }
 @media only screen and (max-width: 600px) {
-    .container {
-        width: 90vw;
-        min-width: 300px;
-    }
+  .container {
+    width: 90vw;
+    min-width: 300px;
+  }
 }
 
-textarea,
-input[type="tel"],
-input:not([type="file"]):not([type="image"]):not(:invalid):not(:disabled):not([disabled]):not([readonly]):hover, textarea:not(:invalid):not(:disabled):not([disabled]):not([readonly]):hover, select:not(:invalid):not(:disabled):not([disabled]):not([readonly]):hover {
-    background-color: var(--main);
-    border: 1px solid var(--accent);
-    color: var(--accent);
+.searchBox {
+  display: flex;
+}
+.searchBox button {
+  background-color: transparent;
+  color: gray;
+  border: none;
+  width: 60px;
+  padding: 0;
 }
 
-textarea {
-    width: 100%;
-    min-height: 20vh;
-    margin-bottom: 4px;
+.buttonBox {
+  display: flex;
+  height: 3.8rem;
 }
-
-button {
-    min-width: 80px;
-    position: relative;
-    background-color: var(--accent);
-    color: var(--main);
+.buttonBox button {
+  margin: 0;
 }
-button:not(:disabled):not([disabled]):hover {
-    background-color: var(--accent-sub);
+.buttonBox label {
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
-
-.res {
-    margin-bottom: 24px;
-}
-.res button+button {
-    margin-left: 1em;
-}
-.res button.google-button {
-    background-color: transparent;
-    color: var(--accent);
-    border: 2px solid var(--accent);
-    margin-left: 1em;
-}
-
-.ui {
-    margin: 1em 0;
-}
-.ui button {
-    margin-left: 4px;
-}
-
-.isbn {
-    display: flex;
-    margin-bottom: 4px;
-}
-.isbn .box input {
-    font-size: 24px;
-    min-width: 0;
-}
-.isbn .box {
-    position: relative;
-    justify-items: center;
-}
-.isbn button {
-    margin-left: 1rem;
-}
-.isbn button.clear-button {
-    color: var(--accent-sub);
-    position: absolute;
-    right: 0;
-    background-color: transparent;
-    min-width: 1.5em;
-    width: 20%;
-    padding: 0;
-    right: 0;
-}
-.isbn button.clear-button:hover {
-    background: none;
-}
-
-.preview {
-    color: var(--accent-sub);
-    font-size: .9em;
+.buttonBox label input {
+  margin: 0 8px;
 }
 
 details {
-    color: var(--accent-sub);
-    border: none;
+  margin: 8px 0 16px 0;
+  padding: 8px;
 }
-details:focus, summary:focus {
-    outline: none;
+
+details label input[type="text"] {
+  box-sizing: border-box;
 }
-details[open] summary {
-    border: none;
+
+details[open] {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+details button {
+  margin: 16px 0;
+}
+
+.front-matter {
+  position: relative;
+}
+
+.front-matter textarea {
+  width: 100%;
+  min-height: 250px;
+  margin: 0;
+  border: 1px solid #ccc;
+}
+
+.front-matter button {
+  position: absolute;
+  right: 0;
+  border-radius: 0 0 0 8px;
+  background: white;
+  color: #444;
+  border: 1px solid #ccc;
+}
+
+button.done::after {
+  content: "\2714";
 }
 
 [v-cloak] {
-    display: none;
+  display: none;
 }
