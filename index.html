@@ -93,7 +93,7 @@
                     return s.substring(0, 3) + "-" + s.substring(3, 4) + "-" + s.substring(4, 12) + "-" + s.substring(12, 13);
                 },
                 authors: function () {
-                    return this.authorInfo.split(" ").map(x => x.split("／")[0].trim()).map(x => x.replace(/(?<![a-z]),/g, "")).filter(x => x.length).map(x => "  - " + x);
+                    return this.authorInfo.split(/\s/).map(x => x.split("／")[0].trim()).map(x => x.replace(/(?<![a-z]),/g, "")).filter(x => x.length).map(x => "  - " + x);
                 },
                 titleFormatted: function () {
                     return toHalfWidth(this.title).trim();
