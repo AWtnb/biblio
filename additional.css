@@ -42,7 +42,8 @@ details {
   padding: 8px;
 }
 
-details label input[type="text"] {
+details label input[type="text"],
+details label input[type="tel"] {
   box-sizing: border-box;
 }
 
