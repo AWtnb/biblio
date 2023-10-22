@@ -105,12 +105,14 @@
                     }
                     return toHalfWidth(this.titleFormatted + st).replace(/ *: */g, "\uff1a");
                 },
+                aliases: function () {
+                    return [this.titleFormatted, this.fullTitleFormatted].filter(t => 0 < t.length).map(t => "  - " + t);
+                },
                 frontMatter: function () {
                     return [
                         "---",
                         "aliases:",
-                        "  - " + this.titleFormatted,
-                        "  - " + this.fullTitleFormatted,
+                        this.aliases.join("\n"),
                         "isbn: " + this.isbnFull,
                         "from: " + this.publisherName,
                         "year: " + this.pubYear,
