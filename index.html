@@ -182,7 +182,17 @@
                     this.frontMatterCopied = true;
                 },
                 copyFileName: function () {
-                    navigator.clipboard.writeText(this.isbnFull);
+                    if (0 < this.bookNum.length) {
+                        navigator.clipboard.writeText(this.isbnFull);
+                    }
+                    else {
+                        const d = new Date();
+                        var yyyy = d.getFullYear();
+                        var mm = ("0" + d.getMonth()).slice(-2);
+                        var dd = ("0" + d.getDay()).slice(-2);
+                        const name = "no-isbn-" + yyyy + mm + dd + "-";
+                        navigator.clipboard.writeText(name);
+                    }
                     this.fileNameCopied = true;
                 },
             },
