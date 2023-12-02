@@ -17,10 +17,12 @@
 }
 
 .searchBox {
-  display: flex;
+  position: relative;
 }
-.searchBox button {
+.searchBox button.clear-button {
+  position: absolute;
   background-color: transparent;
+  right: 0;
   color: gray;
   border: none;
   width: 60px;
