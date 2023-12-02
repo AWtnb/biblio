@@ -19,7 +19,10 @@
     <div class="container">
         <div id="app">
             <div class="isbn">
-                <div class="preview" v-cloak>{{isbnFormat}}</div>
+                <div class="header">
+                    <div class="preview" v-cloak>{{isbnFormat}}</div>
+                    <button @click="copyFileName" :class="{done:fileNameCopied}" class="button-outline">Copy FileName</button>
+                </div>
                 <div class="searchBox">
                     <input type="tel" v-model="bookNum" ref="userInput" @keydown.enter="fetchData"
                         @keyup.enter="fetchData">
@@ -43,7 +46,6 @@
                 <textarea readonly tabindex="-1" v-model="frontMatter"></textarea>
                 <button @click="copyFrontMatter" :class="{done:frontMatterCopied}">Copy</button>
             </div>
-            <button @click="copyFileName" :class="{done:fileNameCopied}">Copy FileName</button>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.global.js"></script>
