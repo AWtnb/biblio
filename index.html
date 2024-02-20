@@ -19,10 +19,7 @@
     <div class="container">
         <div id="app">
             <div class="isbn">
-                <div class="header">
-                    <div class="preview" v-cloak>{{isbnFormat}}</div>
-                    <button @click="copyFileName" :class="{done:fileNameCopied}" class="button-outline">Copy FileName</button>
-                </div>
+                <div class="preview" v-cloak>{{isbnFormat}}</div>
                 <div class="searchBox">
                     <input type="tel" v-model="bookNum" ref="userInput" @keydown.enter="fetchData"
                         @keyup.enter="fetchData">
@@ -42,6 +39,7 @@
                 <label>Publish Year<input type="tel" v-model="pubYear"></label>
                 <label>Tags (space-separated)<input type="text" v-model="authorInfo"></label>
             </details>
+            <button @click="copyFileName" :class="{done:fileNameCopied}" class="button-outline">Copy FileName</button>
             <div class="front-matter">
                 <textarea readonly tabindex="-1" v-model="frontMatter"></textarea>
                 <button @click="copyFrontMatter" :class="{done:frontMatterCopied}">Copy</button>
