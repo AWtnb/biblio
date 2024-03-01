@@ -39,6 +39,11 @@
   margin: 0 8px;
 }
 
+.database-record {
+  font-size: 1.4rem;
+  font-style: italic;
+}
+
 details {
   margin: 8px 0 16px 0;
   padding: 8px;
@@ -47,6 +52,14 @@ details {
 details label input[type="text"],
 details label input[type="tel"] {
   box-sizing: border-box;
+}
+
+details label.sub {
+  font-weight: normal;
+  margin-top: -1em;
+  margin-left: .5em;
+  padding-left: .5em;
+  border-left: 4px solid #9b4dca;
 }
 
 details {
