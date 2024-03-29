@@ -34,7 +34,8 @@
             <details>
                 <summary>Configure</summary>
                 <label>Title<input type="text" v-model="title"></label>
-                <label class="sub">Subtitle<input type="text" v-model="subtitle"></label>
+                <label class="sub">Subtitle<input type="text" v-model="subtitle"><button class="clear-button"
+                        @click="clearSubtitle" tabindex="-1">&times;</button></label>
                 <label>Publisher<input type="text" v-model="publisherName"></label>
                 <label>Publish Year<input type="tel" v-model="pubYear"></label>
                 <label>Tags (space-separated)<input type="text" v-model="authorInfo"></label>
@@ -105,7 +106,11 @@
                     return this.titleFormatted + "\u2015\u2015" + this.subtitle.trim();
                 },
                 aliases: function () {
-                    return [this.titleFormatted, this.fullTitleFormatted].filter(t => 0 < t.length).map(t => "  - " + t);
+                    const lines = [this.titleFormatted];
+                    if (this.subtitle.length && this.subtitle !== lines[0]) {
+                        lines.push(this.fullTitleFormatted);
+                    }
+                    return lines.filter(t => 0 < t.length).map(t => "  - " + t);
                 },
                 frontMatter: function () {
                     return [
@@ -125,6 +130,9 @@
             methods: {
                 clearBox: function () {
                     this.bookNum = "";
+                },
+                clearSubtitle: function () {
+                    this.subtitle = "";
                 },
                 resetInfo: function () {
                     this.title = "";
@@ -195,12 +203,6 @@
                 },
             },
             watch: {
-                subtitle: function () {
-                    if (this.subtitle === this.title) {
-                        return;
-                    }
-                    this.title = this.databaseRecord.slice(0, this.databaseRecord.length - this.subtitle.length);
-                },
                 bookNum: function () {
                     this.resetInfo();
                     this.resetCopyStatus();
